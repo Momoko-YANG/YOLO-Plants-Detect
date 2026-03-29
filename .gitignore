@@ -24,6 +24,9 @@ frontend/dist/
 springboot/src/main/resources/dist/
 springboot/files/
 
+# Environment (含敏感信息，.env.example 保留)
+.env
+
 # Runtime / Logs
 *.log
 *.db

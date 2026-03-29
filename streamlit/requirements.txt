@@ -1,8 +1,10 @@
 streamlit
+python-dotenv
 jieba
 numpy
 pandas
 scikit-learn
 langchain
+langchain-community
 langchain-openai
 openpyxl

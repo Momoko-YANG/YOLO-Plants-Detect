@@ -86,7 +86,8 @@ if "$PYTHON3" -m streamlit version >/dev/null 2>&1; then
   (
     cd "$STREAMLIT_DIR"
     nohup "$PYTHON3" -m streamlit run app.py \
-      --server.port 8501 --server.headless true --server.enableCORS false \
+      --server.port 8501 --server.headless true \
+      --server.enableCORS false --server.enableXsrfProtection false \
       >"$LOG_DIR/streamlit.log" 2>&1 &
     echo $! >"$RUN_DIR/streamlit.pid"
   )

@@ -4,17 +4,30 @@ from pathlib import Path
 
 import socketio
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.middleware.base import BaseHTTPMiddleware
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from backend.config import DIST_DIR, SERVER_PORT
 from backend.routers import camera_records, files, img_records, predict, users, video_records
 
+
+class StripPrefixMiddleware(BaseHTTPMiddleware):
+    """前端生产模式下请求带 /api 前缀，需要去除后转发到实际路由。"""
+
+    async def dispatch(self, request: Request, call_next):
+        path = request.scope["path"]
+        if path.startswith("/api/"):
+            request.scope["path"] = path[4:]
+        return await call_next(request)
+
+
 fastapi_app = FastAPI(title="YOLO FastAPI Backend")
+fastapi_app.add_middleware(StripPrefixMiddleware)
 fastapi_app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

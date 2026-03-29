@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Optional, Union
 
 from pydantic import BaseModel
 
@@ -9,7 +9,7 @@ class PredictRequest(BaseModel):
     username: Optional[str] = ""
     inputImg: Optional[str] = ""
     kind: Optional[str] = ""
-    conf: Optional[str] = ""
+    conf: Union[str, float, int, None] = ""
 
 
 class SuggestRequest(BaseModel):
