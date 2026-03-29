@@ -1,7 +1,7 @@
 import os
 
-from langchain.chat_models import ChatOpenAI
-from langchain.schema import HumanMessage, SystemMessage
+from langchain_community.chat_models import ChatOpenAI
+from langchain_core.messages import HumanMessage, SystemMessage
 
 from utils import parse_think_content
 
@@ -37,7 +37,7 @@ def generate_conversation_title(first_user_msg, first_ai_msg):
             temperature=0.3,
             max_tokens=30,
         )
-        resp = llm([
+        resp = llm.invoke([
             SystemMessage(content="根据以下对话生成一个简短的中文标题（不超过12个字，不要加标点符号和引号，直接输出标题）"),
             HumanMessage(content=f"用户：{first_user_msg}\n助手：{first_ai_msg[:200]}"),
         ])

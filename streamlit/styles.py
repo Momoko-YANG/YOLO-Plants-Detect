@@ -1,13 +1,111 @@
 CUSTOM_CSS = """
 <style>
+    /* ========== 侧边栏 - ChatGPT 浅色风格 ========== */
+    section[data-testid="stSidebar"] {
+        background-color: #f7f7f8 !important;
+    }
+    section[data-testid="stSidebar"] * {
+        color: #353535 !important;
+    }
+
+    /* 新建对话按钮 */
+    section[data-testid="stSidebar"] > div > div > div > div:first-child .stButton > button {
+        background-color: #ffffff !important;
+        border: 1px solid #d9d9d9 !important;
+        border-radius: 10px !important;
+        color: #353535 !important;
+        font-size: 0.9rem !important;
+        padding: 0.55rem 0.8rem !important;
+        margin-bottom: 0.3rem !important;
+        transition: background-color 0.15s;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    section[data-testid="stSidebar"] > div > div > div > div:first-child .stButton > button:hover {
+        background-color: #ececec !important;
+        border-color: #bbb !important;
+    }
+
+    /* 日期分组标签 */
+    .sidebar-group-label {
+        font-size: 0.7rem !important;
+        font-weight: 600;
+        color: #999 !important;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 0.7rem 0.5rem 0.25rem 0.5rem;
+        margin: 0;
+    }
+
+    /* 会话按钮行 - 紧凑无间距 */
+    section[data-testid="stSidebar"] .stColumn {
+        padding: 0 !important;
+        gap: 0 !important;
+    }
+    section[data-testid="stSidebar"] [data-testid="stVerticalBlockBorderWrapper"] {
+        gap: 0 !important;
+        padding: 0 !important;
+    }
+    section[data-testid="stSidebar"] [data-testid="stHorizontalBlock"] {
+        gap: 0 !important;
+    }
+
+    /* 会话标题按钮 */
+    section[data-testid="stSidebar"] .stColumn .stButton > button {
+        background-color: transparent !important;
+        border: none !important;
+        border-radius: 8px !important;
+        color: #555 !important;
+        font-size: 0.82rem !important;
+        font-weight: 400 !important;
+        padding: 0.45rem 0.6rem !important;
+        text-align: left !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        transition: background-color 0.15s;
+        min-height: 0 !important;
+        height: auto !important;
+    }
+    section[data-testid="stSidebar"] .stColumn .stButton > button:hover {
+        background-color: rgba(0,0,0,0.05) !important;
+    }
+
+    /* 当前激活的对话（primary 按钮） */
+    section[data-testid="stSidebar"] .stColumn .stButton > button[kind="primary"],
+    section[data-testid="stSidebar"] .stColumn .stButton > button[data-testid*="primary"] {
+        background-color: #e8e8e8 !important;
+        color: #1a1a1a !important;
+        font-weight: 500 !important;
+    }
+
+    /* 删除按钮 × */
+    section[data-testid="stSidebar"] .stColumn:last-child .stButton > button {
+        opacity: 0.25;
+        font-size: 0.9rem !important;
+        padding: 0.4rem 0 !important;
+        min-height: 0 !important;
+        border: none !important;
+        background: transparent !important;
+        transition: opacity 0.15s;
+    }
+    section[data-testid="stSidebar"] [data-testid="stHorizontalBlock"]:hover .stColumn:last-child .stButton > button {
+        opacity: 0.7;
+    }
+    section[data-testid="stSidebar"] .stColumn:last-child .stButton > button:hover {
+        opacity: 1 !important;
+        color: #ff6b6b !important;
+    }
+
+    /* 隐藏侧边栏默认装饰 */
+    section[data-testid="stSidebar"] [data-testid="stSidebarCollapsedControl"] {
+        color: #ececec !important;
+    }
+
+    /* ========== 主聊天区域 ========== */
     .main .block-container {
         padding-top: 1rem;
         padding-bottom: 3rem;
         max-width: 1100px;
-    }
-    .sidebar .sidebar-content {
-        background-color: #f8f9fa;
-        padding: 1rem;
     }
     .stChatInput {
         padding: 0 !important;
@@ -50,12 +148,16 @@ CUSTOM_CSS = """
     }
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
+
+    /* 聊天消息标题字号 */
     .stChatMessage h1 { font-size: 1.25rem !important; margin: 0.6em 0 0.4em !important; }
     .stChatMessage h2 { font-size: 1.1rem !important;  margin: 0.5em 0 0.3em !important; }
     .stChatMessage h3 { font-size: 1rem !important;    margin: 0.4em 0 0.2em !important; }
     .stChatMessage h4,
     .stChatMessage h5,
     .stChatMessage h6 { font-size: 0.95rem !important; margin: 0.3em 0 0.2em !important; }
+
+    /* 思考过程折叠面板 */
     .stChatMessage .streamlit-expanderHeader {
         font-size: 0.85rem !important;
         color: #888 !important;
@@ -66,19 +168,6 @@ CUSTOM_CSS = """
         background-color: #f9f9f9;
         border-radius: 6px;
         padding: 0.5rem 0.75rem;
-    }
-    section[data-testid="stSidebar"] .stButton > button {
-        text-align: left !important;
-        font-size: 0.85rem !important;
-        padding: 0.4rem 0.6rem !important;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    section[data-testid="stSidebar"] .stCaption {
-        margin-top: -0.6rem !important;
-        padding-left: 0.6rem;
-        font-size: 0.7rem !important;
     }
 </style>
 """

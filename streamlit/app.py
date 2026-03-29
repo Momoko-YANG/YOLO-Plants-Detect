@@ -3,7 +3,7 @@ import time
 from datetime import datetime
 
 import streamlit as st
-from langchain.schema import HumanMessage, SystemMessage
+from langchain_core.messages import HumanMessage, SystemMessage
 
 import config  # noqa: F401  (触发 load_dotenv)
 from database import (
@@ -17,7 +17,7 @@ from database import (
     update_conversation_title,
 )
 from llm import build_chat_messages, generate_conversation_title, init_llm
-from retrieval import QARetrievalSystem
+from retrieval import get_retrieval_system
 from styles import CUSTOM_CSS
 from utils import (
     generate_conversation_id,
@@ -27,10 +27,45 @@ from utils import (
 )
 
 
+def _group_by_date(conversations):
+    """将会话按日期分组为 (组名, 列表) 的有序列表"""
+    from datetime import timedelta
+    today = datetime.now().date()
+    yesterday = today - timedelta(days=1)
+    week_ago = today - timedelta(days=7)
+
+    groups = {"今天": [], "昨天": [], "近 7 天": [], "更早": []}
+    for conv_id, title, updated_at in conversations:
+        try:
+            d = datetime.strptime(updated_at[:10], "%Y-%m-%d").date()
+        except Exception:
+            d = today
+        if d == today:
+            groups["今天"].append((conv_id, title))
+        elif d == yesterday:
+            groups["昨天"].append((conv_id, title))
+        elif d >= week_ago:
+            groups["近 7 天"].append((conv_id, title))
+        else:
+            groups["更早"].append((conv_id, title))
+    return [(k, v) for k, v in groups.items() if v]
+
+
+def _switch_conversation(conv_id):
+    st.session_state.conversation_id = conv_id
+    st.session_state.messages = []
+    for rec in load_chat_history(50, conv_id):
+        st.session_state.messages.append({
+            "id": rec[0], "role": rec[2], "content": rec[3],
+            "timestamp": rec[1][11:19], "response_time": rec[4],
+        })
+    st.session_state.title_generated = True
+
+
 def render_sidebar():
-    """侧边栏：新建对话 + 历史会话列表"""
     with st.sidebar:
-        if st.button("➕ 新建对话", use_container_width=True, type="primary"):
+        # 新建对话按钮
+        if st.button("＋  新建对话", key="new_chat", use_container_width=True):
             new_id = generate_conversation_id()
             create_conversation(new_id)
             st.session_state.conversation_id = new_id
@@ -38,40 +73,34 @@ def render_sidebar():
             st.session_state.title_generated = False
             st.rerun()
 
-        st.markdown("---")
-        st.markdown("##### 对话历史")
-
-        for conv_id, title, updated_at in get_conversations():
-            is_active = conv_id == st.session_state.conversation_id
-            date_str = updated_at[:10] if updated_at else ""
-
-            col_btn, col_del = st.columns([5, 1])
-            with col_btn:
-                label = f"{'▶ ' if is_active else ''}{title}"
-                if st.button(label, key=f"conv_{conv_id}", use_container_width=True,
-                             disabled=is_active):
-                    st.session_state.conversation_id = conv_id
-                    st.session_state.messages = []
-                    for rec in load_chat_history(50, conv_id):
-                        st.session_state.messages.append({
-                            "id": rec[0], "role": rec[2], "content": rec[3],
-                            "timestamp": rec[1][11:19], "response_time": rec[4],
-                        })
-                    st.session_state.title_generated = True
-                    st.rerun()
-            with col_del:
-                if st.button("🗑", key=f"del_{conv_id}", help="删除此对话"):
-                    delete_conversation(conv_id)
-                    if conv_id == st.session_state.conversation_id:
-                        new_id = generate_conversation_id()
-                        create_conversation(new_id)
-                        st.session_state.conversation_id = new_id
-                        st.session_state.messages = []
-                        st.session_state.title_generated = False
-                    st.rerun()
-
-            if not is_active:
-                st.caption(f"　{date_str}")
+        # 按日期分组显示对话历史
+        groups = _group_by_date(get_conversations())
+        for group_name, items in groups:
+            st.markdown(f'<div class="sidebar-group-label">{group_name}</div>',
+                        unsafe_allow_html=True)
+            for conv_id, title in items:
+                is_active = conv_id == st.session_state.conversation_id
+                row = st.container()
+                with row:
+                    c1, c2 = st.columns([6, 1])
+                    with c1:
+                        btn_type = "primary" if is_active else "secondary"
+                        if st.button(title, key=f"c_{conv_id}",
+                                     use_container_width=True, type=btn_type):
+                            if not is_active:
+                                _switch_conversation(conv_id)
+                                st.rerun()
+                    with c2:
+                        if st.button("×", key=f"d_{conv_id}",
+                                     help="删除"):
+                            delete_conversation(conv_id)
+                            if is_active:
+                                nid = generate_conversation_id()
+                                create_conversation(nid)
+                                st.session_state.conversation_id = nid
+                                st.session_state.messages = []
+                                st.session_state.title_generated = False
+                            st.rerun()
 
 
 def render_history():
@@ -102,7 +131,7 @@ def render_history():
                             st.success("感谢您的反馈!")
 
 
-def handle_user_input(retrieval_system: QARetrievalSystem):
+def handle_user_input(retrieval_system):
     """处理用户输入、RAG 检索、流式 AI 回复"""
     prompt = st.chat_input("请输入您的问题...")
     if not prompt:
@@ -206,10 +235,8 @@ def main():
 
     st.title("💬 RAG问答系统")
     render_history()
-    handle_user_input(retrieval_system)
+    handle_user_input(get_retrieval_system())
 
 
 if __name__ == "__main__":
-    retrieval_system = QARetrievalSystem()
-    retrieval_system.load_qa_pairs()
     main()

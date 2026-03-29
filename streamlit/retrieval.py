@@ -3,10 +3,13 @@ import os
 import jieba
 import numpy as np
 import pandas as pd
+import streamlit as st
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 from config import BASE_DIR
+
+jieba.initialize()
 
 
 class QARetrievalSystem:
@@ -81,3 +84,11 @@ class QARetrievalSystem:
             for i in top_idx
             if sims[i] >= threshold
         ]
+
+
+@st.cache_resource
+def get_retrieval_system():
+    """全局单例，仅在首次调用时加载 xlsx + 构建 TF-IDF 索引"""
+    system = QARetrievalSystem()
+    system.load_qa_pairs()
+    return system

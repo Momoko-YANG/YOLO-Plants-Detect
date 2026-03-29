@@ -4,7 +4,6 @@ jieba
 numpy
 pandas
 scikit-learn
-langchain
+langchain-core
 langchain-community
-langchain-openai
 openpyxl
