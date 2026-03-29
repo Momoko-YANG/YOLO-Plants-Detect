@@ -22,6 +22,7 @@ frontend/dist/
 # Java / Maven
 **/target/
 springboot/src/main/resources/dist/
+springboot/files/
 
 # Runtime / Logs
 *.log
@@ -29,7 +30,7 @@ springboot/src/main/resources/dist/
 *.sqlite
 *.sqlite3
 
-# Shared resources
+# Shared resources (运行时产物)
 shared/uploads/
 shared/dist/
 
