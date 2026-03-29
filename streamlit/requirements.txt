@@ -1,0 +1,8 @@
+streamlit
+jieba
+numpy
+pandas
+scikit-learn
+langchain
+langchain-openai
+openpyxl

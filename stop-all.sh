@@ -5,37 +5,37 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 RUN_DIR="$ROOT_DIR/.run"
 PID_FILE="$RUN_DIR/pids.env"
 
-kill_if_running() {
-  local pid="$1"
-  local name="$2"
-  if [[ -n "${pid}" ]] && kill -0 "${pid}" >/dev/null 2>&1; then
-    kill "${pid}" >/dev/null 2>&1 || true
-    echo "[STOP] ${name} (pid ${pid})"
-  else
-    echo "[SKIP] ${name} not running by pid."
-  fi
-}
+echo "== 一键停止 =="
+
+# ── 按 PID 文件停止 ──
 
 if [[ -f "$PID_FILE" ]]; then
   # shellcheck source=/dev/null
   source "$PID_FILE"
-else
-  echo "[INFO] PID file not found: $PID_FILE"
+
+  for pair in "FASTAPI_PID:FastAPI" "STREAMLIT_PID:Streamlit" "VUE_PID:Vue"; do
+    key="${pair%%:*}"
+    name="${pair##*:}"
+    pid="${!key:-}"
+    if [[ -n "$pid" ]] && kill -0 "$pid" >/dev/null 2>&1; then
+      kill "$pid" >/dev/null 2>&1 || true
+      echo "[STOP] $name (pid $pid)"
+    fi
+  done
 fi
 
-kill_if_running "${VUE_PID:-}" "Vue"
-kill_if_running "${STREAMLIT_PID:-}" "Streamlit"
-kill_if_running "${FASTAPI_PID:-}" "FastAPI"
-kill_if_running "${FLASK_PID:-}" "Flask"
-kill_if_running "${SPRING_PID:-}" "Spring Boot"
+# ── 兜底：按端口清理 ──
 
-# Also clear common ports in case service was started manually.
-for port in 8888 8501 9999; do
+for port in 9999 8501 8888; do
   pids="$(lsof -ti "tcp:${port}" -sTCP:LISTEN 2>/dev/null || true)"
   if [[ -n "$pids" ]]; then
     echo "$pids" | xargs kill >/dev/null 2>&1 || true
-    echo "[STOP] Cleared listener(s) on port ${port}"
+    echo "[STOP] 清理端口 $port"
   fi
 done
 
-echo "[DONE] All services stopped."
+# ── 清空 PID 文件 ──
+
+: >"$RUN_DIR/pids.env" 2>/dev/null || true
+
+echo "[DONE] 所有服务已停止"

@@ -17,23 +17,24 @@ env/
 
 # Node / Frontend
 **/node_modules/
-yolo_img_detection_web/yolo_img_detection_vue/dist/
+frontend/dist/
 
 # Java / Maven
 **/target/
-yolo_img_detection_web/yolo_img_detection_springboot/src/main/resources/dist/
+springboot/src/main/resources/dist/
 
 # Runtime / Logs
 *.log
 *.db
 *.sqlite
 *.sqlite3
-.env
-.env.*
+
+# Shared resources
+shared/uploads/
+shared/dist/
 
 # Model / Training Artifacts
 datasets/
 Plant.v4-v4.0.yolov11/
 **/runs/
 **/*.pt
-yolo_img_detection_web/yolo_img_detection_springboot/files/
