@@ -30,7 +30,7 @@ wait_for_port() {
   while ! is_port_listening "$port"; do
     if [[ -n "$pid" ]] && ! kill -0 "$pid" >/dev/null 2>&1; then
       echo "[FAIL] $name 进程已退出，未能监听 $port"
-      echo "       日志: $LOG_DIR/${name,,}.log"
+      echo "       日志: $LOG_DIR/$(echo "$name" | tr '[:upper:]' '[:lower:]').log"
       return 1
     fi
     sleep 1
@@ -85,7 +85,7 @@ if "$PYTHON3" -m streamlit version >/dev/null 2>&1; then
   echo "[START] Streamlit (8501) ..."
   (
     cd "$STREAMLIT_DIR"
-    nohup "$PYTHON3" -m streamlit run app.py \
+    nohup "$PYTHON3" -m streamlit run main.py \
       --server.port 8501 --server.headless true \
       --server.enableCORS false --server.enableXsrfProtection false \
       >"$LOG_DIR/streamlit.log" 2>&1 &

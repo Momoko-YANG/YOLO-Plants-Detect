@@ -7,7 +7,7 @@ import streamlit as st
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-from config import BASE_DIR
+from config import DATA_DIR
 
 jieba.initialize()
 
@@ -15,9 +15,9 @@ jieba.initialize()
 class QARetrievalSystem:
     def __init__(self, qa_dir=None):
         if qa_dir is None:
-            self.qa_dir = str(BASE_DIR)
+            self.qa_dir = str(DATA_DIR)
         else:
-            self.qa_dir = os.path.join(str(BASE_DIR), qa_dir)
+            self.qa_dir = os.path.join(str(DATA_DIR), qa_dir)
         print(f"QA目录路径: {self.qa_dir}")
         self.qa_pairs = []
         self.questions = []

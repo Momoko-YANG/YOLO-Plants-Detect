@@ -60,15 +60,23 @@
 │   ├── src/stores/           #   Pinia 状态管理
 │   └── src/utils/            #   请求封装 / Socket.IO 客户端
 │
-├── streamlit/                # Streamlit RAG 问答（模块化）
-│   ├── app.py                #   入口：侧边栏 + 聊天 + 流式输出
+├── streamlit/                # Streamlit RAG 问答
+│   ├── main.py               #   入口：侧边栏 + 聊天 + 流式输出
 │   ├── config.py             #   路径常量 / 环境加载
-│   ├── database.py           #   SQLite 会话 / 消息 / 反馈
-│   ├── retrieval.py          #   TF-IDF 知识库检索引擎
-│   ├── llm.py                #   LLM 初始化 / 消息构建 / 标题生成
-│   ├── utils.py              #   think 标签解析 / 消息渲染
-│   ├── styles.py             #   ChatGPT 风格 CSS
-│   └── prompt.txt            #   RAG Prompt 模板
+│   ├── core/                 #   后端核心逻辑
+│   │   ├── database.py       #     SQLite 会话 / 消息 / 反馈
+│   │   ├── llm.py            #     LLM 初始化 / 消息构建 / 标题生成
+│   │   └── retrieval.py      #     TF-IDF 知识库检索引擎
+│   ├── ui/                   #   界面层
+│   │   ├── styles.py         #     ChatGPT 风格 CSS
+│   │   └── components.py     #     think 标签解析 / 消息渲染
+│   ├── data/                 #   知识库 + Prompt 模板
+│   │   ├── *.xlsx            #     QA 知识库文件
+│   │   └── prompt.txt        #     RAG Prompt 模板
+│   └── detect/               #   YOLO 检测 Flask API
+│       ├── app.py            #     图片 / 视频 / 摄像头推理
+│       ├── train.py          #     模型训练脚本
+│       └── predict/          #     预测模块
 │
 ├── shared/
 │   ├── weights/              # YOLO 模型权重（.pt）

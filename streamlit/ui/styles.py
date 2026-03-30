@@ -107,27 +107,75 @@ CUSTOM_CSS = """
         padding-bottom: 3rem;
         max-width: 1100px;
     }
+    /* ========== 输入框 - ChatGPT 风格 ========== */
     .stChatInput {
         padding: 0 !important;
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
         margin-top: 0.5rem;
-        border-radius: 8px;
+        border-radius: 24px !important;
         background-color: #ffffff;
+        border: 1px solid #d9d9e3 !important;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
         overflow: hidden;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .stChatInput:focus-within {
+        border-color: #10a37f !important;
+        box-shadow: 0 2px 16px rgba(16,163,127,0.15);
     }
     [data-testid="stChatInputTextArea"] {
-        border-radius: 8px !important;
-        padding: 0.8rem 1rem !important;
-        border: 1px solid #ddd !important;
+        border: none !important;
+        border-radius: 24px !important;
+        padding: 0.75rem 1.2rem !important;
+        font-size: 0.95rem !important;
+        line-height: 1.5 !important;
         box-sizing: border-box !important;
-        width: calc(100% - 40px) !important;
+        width: calc(100% - 48px) !important;
         margin: 0 !important;
+        background: transparent !important;
+        resize: none;
+    }
+    [data-testid="stChatInputTextArea"]:focus,
+    [data-testid="stChatInputTextArea"]:focus-visible,
+    [data-testid="stChatInputTextArea"]:active {
+        outline: none !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+    .stChatInput [data-baseweb="textarea"],
+    .stChatInput [data-baseweb="textarea"]:focus-within,
+    .stChatInput textarea,
+    .stChatInput textarea:focus,
+    .stChatInput textarea:focus-visible {
+        border-color: transparent !important;
+        outline: none !important;
+        box-shadow: none !important;
     }
     [data-testid="stChatInputSubmitButton"] {
         box-sizing: border-box !important;
         height: 100% !important;
         margin: 0 !important;
-        border-radius: 0 8px 8px 0 !important;
+        border-radius: 0 24px 24px 0 !important;
+        padding: 0 0.6rem !important;
+    }
+    [data-testid="stChatInputSubmitButton"] button {
+        background-color: #10a37f !important;
+        color: #fff !important;
+        border: none !important;
+        border-radius: 50% !important;
+        width: 32px !important;
+        height: 32px !important;
+        min-height: 32px !important;
+        padding: 0 !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.15s;
+    }
+    [data-testid="stChatInputSubmitButton"] button:hover {
+        background-color: #0d8a6a !important;
+    }
+    [data-testid="stChatInputSubmitButton"] button:disabled {
+        background-color: #d9d9e3 !important;
     }
     .stChatMessage {
         padding: 12px 16px;
@@ -135,6 +183,15 @@ CUSTOM_CSS = """
         margin: 8px 0;
         max-width: 80%;
         box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        overflow: visible;
+    }
+    /* 防止聊天气泡内的列布局溢出重叠 */
+    .stChatMessage [data-testid="stHorizontalBlock"] {
+        flex-wrap: nowrap;
+        gap: 0.5rem;
+    }
+    .stChatMessage .stColumn {
+        min-width: 0;
     }
     [data-testid="stChatMessage-user"] {
         margin-left: auto;

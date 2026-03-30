@@ -45,6 +45,7 @@ def load_prompt_template():
 
     path = str(PROMPT_FILE)
     if not os.path.exists(path):
+        os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, "w", encoding="utf-8") as f:
             f.write(default_prompt)
         return default_prompt

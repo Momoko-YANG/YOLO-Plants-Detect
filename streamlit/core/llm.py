@@ -3,7 +3,7 @@ import os
 from langchain_community.chat_models import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 
-from utils import parse_think_content
+from ui.components import parse_think_content
 
 
 def init_llm(streaming=False):
